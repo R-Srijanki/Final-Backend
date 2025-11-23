@@ -5,8 +5,8 @@ import jwt from "jsonwebtoken";
 export async function registerUser(req,res) {
     try{
         // console.log("infunction");
-        const {username,email,password}=req.body;//get field data from body
-        if(!username || !email ||!password) //if any fields data missing return
+        const {fullName,username,email,password}=req.body;//get field data from body
+        if(!fullName||!username || !email ||!password) //if any fields data missing return
             return res.status(400).json({"message":"Missing fields"});
         //console.log(name,email,password);//find if user exists
         const exists=await User.findOne({email});
@@ -14,7 +14,8 @@ export async function registerUser(req,res) {
         if(exists) //if exists then return 
             return res.status(400).json({message:"Email already in use"});
         //create new user with given data of each fields
-        const newUser=await User.create({username,email,
+        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random`;
+        const newUser=await User.create({username,email,fullName,avatarUrl,
             password:bcrypt.hashSync(password,12),//hash password when sent to database so it won't be easy to guess
             //second parameter is saltrounds means how many times it is hashed
         });
@@ -29,8 +30,8 @@ export async function registerUser(req,res) {
 
 export async function loginUser(req,res) {
     try{
-        const {email,password}=req.body;//get field data from body
-        if(!email ||!password)//if any data missing then return
+        const {username,email,password}=req.body;//get field data from body
+        if(!username||!email ||!password)//if any data missing then return
             return res.status(400).json({"message":"Missing fields"});
         //find user with given details
         const exists=await User.findOne({email});
