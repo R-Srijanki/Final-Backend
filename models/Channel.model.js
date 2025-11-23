@@ -1,52 +1,49 @@
 import mongoose from "mongoose";
-import UserModel from "./User.model";
-import VideoModel from "./Video.model";
 
-const channelSchema=new mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
-        unique:true,
-        trim:true,
-        index:true,
+const channelSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      index: true
     },
     handle: {
-            type: String,
-            required: true,
-            unique: true,
-            index: true,
-            trim: true
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      index: true
     },
-    description:{
-        type:String,
-        required:true
+    description: {
+      type: String,
+      required: true
     },
-    avatar:{
-        type:String
+    avatar: { type: String },
+    channelBanner: { type: String },
+
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", 
+      required: true
     },
-    channelBanner:{
-        type:String
-    },
-    owner:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:UserModel
-    },
-    subscribers:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:UserModel
-        }
+
+    subscribers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      }
     ],
-    videos:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            ref:VideoModel
-        }
+
+    videos: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Video" 
+      }
     ]
-},
-{
-    timestamps:true
-}
+  },
+  { timestamps: true }
 );
 
-export default mongoose.model('Channel',channelSchema);
+export default mongoose.model("Channel", channelSchema);

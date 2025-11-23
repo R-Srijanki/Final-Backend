@@ -1,6 +1,7 @@
 import express from "express"
 import mongoose from "mongoose"
 import cors from "cors"
+import userRoutes from "./routes/user.routes.js";
 const app=express();
 app.use(cors());
 app.use(express.json());
@@ -17,6 +18,7 @@ db.on("open",()=>{
 db.on("error",()=>{
     console.log("Connection not successful");
 });
+userRoutes(app);
 app.listen(8000,()=>{
     console.log("Server listening on port 8000");
 })
