@@ -26,6 +26,11 @@ const userSchema=new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+    channel:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:channel,
+        required:true
     }
     },
     {
