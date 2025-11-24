@@ -4,6 +4,7 @@ import cors from "cors"
 import userRoutes from "./routes/user.routes.js";
 import commentRoutes from "./routes/comment.routes.js";
 import videoRoutes from "./routes/video.routes.js";
+import channelRoutes from "./routes/channel.routes.js";
 const app=express();
 app.use(cors());
 app.use(express.json());
@@ -23,6 +24,7 @@ db.on("error",()=>{
 userRoutes(app);
 videoRoutes(app);
 commentRoutes(app);
+channelRoutes(app);
 app.listen(8000,()=>{
     console.log("Server listening on port 8000");
 })

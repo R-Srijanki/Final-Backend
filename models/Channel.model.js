@@ -32,14 +32,16 @@ const channelSchema = new mongoose.Schema(
     subscribers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        default:[]
       }
     ],
 
     videos: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Video" 
+        ref: "Video",
+        default:[]
       }
     ]
   },
