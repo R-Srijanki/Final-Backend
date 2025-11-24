@@ -16,6 +16,14 @@ const commentSchema = new mongoose.Schema(
       type: String,
       required: true
     },
+    like:[{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"User"
+    }],
+    dislike:[{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"User"
+    }],
     timestamp: {
       type: Date,
       default: Date.now
