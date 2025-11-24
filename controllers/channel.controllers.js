@@ -33,10 +33,26 @@ export async function createChannel(req,res) {
 }
 export async function getChannel(req,res) {
     try{
-        
+        const { id } = req.params;
+
+        const channel = await Channel.findById(id)
+        .populate("owner", "name email")
+        .populate("subscribers", "_id name")
+        .populate("videos", "title thumbnail views");
+
+        if (!channel)
+        return res.status(404).json({ message: "Channel not found" });
+
+        return res.status(200).json({
+        message: "Channel details",
+        data: channel
+        });
     }
     catch(err){
-        return res.status(500).json({message:"error occurred while fetching channel",error:err.message});
+        return res.status(500).json({
+            message: "Error fetching channel",
+            error: err.message
+        });
     }
 }
 export async function editChannel(req,res) {
