@@ -1,4 +1,5 @@
 import Channel from "../models/Channel.model.js"
+import Video from "../models/Video.model.js";
 export async function createChannel(req,res) {
     try {
     const { name, handle, description, channelBanner } = req.body;
@@ -89,19 +90,27 @@ export async function editChannel(req,res) {
 }
 export async function deleteChannel(req,res) {
     try{
-        const { id } = req.params;
+       const { id } = req.params;
 
         const channel = await Channel.findById(id);
         if (!channel)
-        return res.status(404).json({ message: "Channel not found" });
+            return res.status(404).json({ message: "Channel not found" });
 
         if (channel.owner.toString() !== req.user._id.toString())
-        return res.status(403).json({ message: "Unauthorized" });
+            return res.status(403).json({ message: "Unauthorized" });
+
+        const videos = await Video.find({ channel: id });
+
+        const videoIds = videos.map(v => v._id);
+
+        await Comment.deleteMany({ video: { $in: videoIds } });
+
+        await Video.deleteMany({ channel: id });
 
         await Channel.findByIdAndDelete(id);
 
         return res.status(200).json({
-        message: "Channel deleted successfully"
+            message: "Channel deleted successfully with all linked videos and comments"
         });
 
     }
@@ -111,4 +120,70 @@ export async function deleteChannel(req,res) {
             error: err.message
         });
     }
+}
+
+export async function subscribeChannel(req, res) {
+  try {
+    const { id } = req.params;
+
+    const channel = await Channel.findById(id);
+    if (!channel)
+      return res.status(404).json({ message: "Channel not found" });
+
+    if (channel.owner.toString() === req.user._id.toString()) {
+      return res.status(400).json({ message: "You cannot subscribe to your own channel" });
+    }
+
+    if (channel.subscribers.includes(req.user._id)) {
+      return res.status(400).json({ message: "Already subscribed" });
+    }
+
+    channel.subscribers.push(req.user._id);
+    await channel.save();
+
+    return res.status(200).json({
+      message: "Subscribed successfully",
+      channelId: id
+    });
+
+  } 
+  catch (err) {
+    return res.status(500).json({
+      message: "Error subscribing to channel",
+      error: err.message
+    });
+  }
+}
+
+export async function unsubscribeChannel(req, res) {
+  try {
+    const { id } = req.params;
+
+    const channel = await Channel.findById(id);
+    if (!channel)
+      return res.status(404).json({ message: "Channel not found" });
+
+    const isSubscribed = channel.subscribers.includes(req.user._id);
+
+    if (!isSubscribed)
+      return res.status(400).json({ message: "You are not subscribed" });
+
+    channel.subscribers = channel.subscribers.filter(
+      (sub) => sub.toString() !== req.user._id.toString()
+    );
+
+    await channel.save();
+
+    return res.status(200).json({
+      message: "Unsubscribed successfully",
+      channelId: id
+    });
+
+  } 
+  catch (err) {
+    return res.status(500).json({
+      message: "Error unsubscribing",
+      error: err.message
+    });
+  }
 }

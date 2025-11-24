@@ -33,7 +33,7 @@ const videoSchema = new mongoose.Schema(
       required: true
     },
 
-    channelId: {
+    channel: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Channel",
       required: true

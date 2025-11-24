@@ -39,10 +39,10 @@ export async function getVideo(req,res) {
 
 export async function uploadVideo(req,res) {
     try {
-    const { title, thumbnailurl, videoUrl, description, category, channelId } =
+    const { title, thumbnailurl, videoUrl, description, category, channel } =
       req.body;
 
-    if (!title || !thumbnailurl || !videoUrl || !description || !channelId) {
+    if (!title || !thumbnailurl || !videoUrl || !description || !channel) {
       return res.status(400).json({
         message: "Missing required fields",
       });
@@ -58,12 +58,12 @@ export async function uploadVideo(req,res) {
       description,
       category,
       uploader: uploaderId,
-      channelId,
+      channel,
       views: 0,
     });
 
     // Add video to channel’s video list
-    await Channel.findByIdAndUpdate(channelId, {
+    await Channel.findByIdAndUpdate(channel, {
       $push: { videos: newVideo._id },
     });
 
@@ -115,7 +115,7 @@ export async function deleteVideo(req,res) {
     }
 
     // Remove from channel
-    await Channel.findByIdAndUpdate(deletedVideo.channelId, {
+    await Channel.findByIdAndUpdate(deletedVideo.channel, {
       $pull: { videos: id },
     });
 
