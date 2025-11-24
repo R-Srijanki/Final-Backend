@@ -1,0 +1,57 @@
+import Channel from "../models/Channel.model.js"
+export async function createChannel(req,res) {
+    try {
+    const { name, handle, description, channelBanner } = req.body;
+
+    // A user must not create more than one channel
+    const existing = await Channel.findOne({ owner: req.user._id });
+    if (existing)
+      return res.status(400).json({ message: "Channel already exists for this user" });
+
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
+
+    const newChannel = await Channel.create({
+      name,
+      handle,
+      description,
+      avatar: avatarUrl,
+      channelBanner,
+      owner: req.user._id
+    });
+
+    return res.status(201).json({
+      message: "Channel created successfully",
+      data: newChannel
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error creating channel",
+      error: err.message
+    });
+  }
+}
+export async function getChannel(req,res) {
+    try{
+        
+    }
+    catch(err){
+        return res.status(500).json({message:"error occurred while fetching channel",error:err.message});
+    }
+}
+export async function editChannel(req,res) {
+    try{
+        
+    }
+    catch(err){
+        return res.status(500).json({message:"error occurred during channel edit",error:err.message});
+    }
+}
+export async function deleteChannel(req,res) {
+    try{
+    
+    }
+    catch(err){
+        return res.status(500).json({message:"error occurred during deletion of channel",error:err.message});
+    }
+}
