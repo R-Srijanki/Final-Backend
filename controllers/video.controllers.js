@@ -4,7 +4,7 @@ export async function getVideos(req,res){
    try {
     const videos = await Video.find({})
       .populate("uploader", "username fullName avatar")
-      .populate("channelId", "name handle avatar");
+      .populate("channel", "name handle avatar");
 
     return res.status(200).json(videos);
   } catch (err) {
