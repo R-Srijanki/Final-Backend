@@ -6,7 +6,7 @@ import {
   deleteVideo,
   likeVideo,
   dislikeVideo
-} from "../controllers/video.controller.js";
+} from "../controllers/video.controllers.js";
 
 import verifyToken from "../middlewares/verify.js";
 

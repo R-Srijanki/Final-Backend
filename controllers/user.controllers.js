@@ -15,7 +15,7 @@ export async function registerUser(req,res) {
             return res.status(400).json({message:"Email already in use"});
         //create new user with given data of each fields
         const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random`;
-        const newUser=await User.create({username,email,fullName,avatarUrl,
+        const newUser=await User.create({username,email,fullName,avatar:avatarUrl,
             password:bcrypt.hashSync(password,12),//hash password when sent to database so it won't be easy to guess
             //second parameter is saltrounds means how many times it is hashed
         });
