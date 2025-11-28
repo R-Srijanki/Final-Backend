@@ -2,7 +2,9 @@ import Channel from "../models/Channel.model.js"
 import Video from "../models/Video.model.js";
 export async function createChannel(req,res) {
     try {
-    const { name, handle, description, channelBanner } = req.body;
+    const { name, handle} = req.body;
+    if (!name || !handle)
+      return res.status(400).json({ message: "Missing required fields" });
 
     // A user must not create more than one channel
     const existing = await Channel.findOne({ owner: req.user._id });
@@ -10,16 +12,15 @@ export async function createChannel(req,res) {
       return res.status(400).json({ message: "Channel already exists for this user" });
 
     const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
-
+    const bannerPath = req.file ? `/uploads/${req.file.filename}` : "";
     const newChannel = await Channel.create({
       name,
       handle,
-      description,
       avatar: avatarUrl,
-      channelBanner,
+      channelBanner:bannerPath,
       owner: req.user._id
     });
-
+    await User.findByIdAndUpdate(req.user._id, { channel: newChannel._id });
     return res.status(201).json({
       message: "Channel created successfully",
       data: newChannel

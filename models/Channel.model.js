@@ -17,16 +17,14 @@ const channelSchema = new mongoose.Schema(
       index: true
     },
     description: {
-      type: String,
-      required: true
+      type: String
     },
     avatar: { type: String },
     channelBanner: { type: String },
 
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", 
-      required: true
+      ref: "User"
     },
 
     subscribers: [
