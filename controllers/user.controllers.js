@@ -34,13 +34,13 @@ export async function loginUser(req,res) {
         if(!username||!email ||!password)//if any data missing then return
             return res.status(400).json({"message":"Missing fields"});
         //find user with given details
-        const exists=await User.findOne({email});
+        const exists=await User.findOne({email}).populate("channel","handle");
         if(!exists)//if user is not registered then return
             return res.status(401).json({message:"User does not exist"});
         //compare hashed password with typed password 
         let validPassword=bcrypt.compareSync(password,exists.password);
         if(!validPassword){ //if not matched then wrong password
-            return res.status(401).json({"message":"Invalid user details"});
+            return res.status(401).json({"message":"Incorrect password"});
         }
         //create token with data, secret key, access to it expiresIn
         let token=jwt.sign({id:exists.id},"SECRETKEY",{expiresIn:"7d"});
@@ -48,12 +48,18 @@ export async function loginUser(req,res) {
         return res.status(200).json({
             user:{
                 username:exists.username,
-                email:exists.email
+                email:exists.email,
+                avatar:exists.avatar,
+                fullName:exists.fullName,
+                channel:exists.channel
             },
             accessToken:token,
         });
     }//error during login goes to catch block
     catch(err){
-        return res.status(500).json({"error occured during login":err.message});
+          return res.status(500).json({
+            message: "Error occurred during login",
+            error: err.message
+        });
     }
 }
