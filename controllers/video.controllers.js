@@ -21,7 +21,7 @@ export async function getVideo(req,res) {
 
     const video = await Video.findById(id)
       .populate("uploader", "username fullName avatar")
-      .populate("channelId", "name handle avatar");
+      .populate("channel", "name handle avatar");
 
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
@@ -49,7 +49,7 @@ export async function uploadVideo(req,res) {
     }
 
     // uploader is the logged-in user
-    const uploaderId = req.user.id;
+    const uploaderId = req.user._id;
     
     const newVideo = await Video.create({
       title,
