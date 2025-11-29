@@ -1,5 +1,6 @@
 import Channel from "../models/Channel.model.js"
 import Video from "../models/Video.model.js";
+import User from "../models/User.model.js";
 export async function createChannel(req,res) {
     try {
     const { name, handle} = req.body;
@@ -12,12 +13,12 @@ export async function createChannel(req,res) {
       return res.status(400).json({ message: "Channel already exists for this user" });
 
     const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
-    const bannerPath = req.file ? `/uploads/${req.file.filename}` : "";
+   const bannerBase64 = req.file ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` : "";
     const newChannel = await Channel.create({
       name,
       handle,
       avatar: avatarUrl,
-      channelBanner:bannerPath,
+      channelBanner:bannerBase64,
       owner: req.user._id
     });
     await User.findByIdAndUpdate(req.user._id, { channel: newChannel._id });

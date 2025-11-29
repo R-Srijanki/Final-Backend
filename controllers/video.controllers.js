@@ -39,10 +39,10 @@ export async function getVideo(req,res) {
 
 export async function uploadVideo(req,res) {
     try {
-    const { title, thumbnailurl, videoUrl, description, category, channel } =
+    const { title, thumbnailUrl, videoUrl, description, category, channel } =
       req.body;
 
-    if (!title || !thumbnailurl || !videoUrl || !description || !channel) {
+    if (!title || !thumbnailUrl || !videoUrl || !description || !channel) {
       return res.status(400).json({
         message: "Missing required fields",
       });
@@ -50,10 +50,10 @@ export async function uploadVideo(req,res) {
 
     // uploader is the logged-in user
     const uploaderId = req.user.id;
-
+    
     const newVideo = await Video.create({
       title,
-      thumbnailurl,
+      thumbnailUrl,
       videoUrl,
       description,
       category,
