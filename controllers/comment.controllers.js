@@ -112,7 +112,7 @@ export async function likeComment(req,res) {
 
     await comment.save();
 
-    return res.status(200).json({ message: "Like updated", comment });
+    return res.status(200).json(comment);
   } catch (err) {
     return res.status(500).json({
       message: "Error while liking comment",
@@ -142,7 +142,7 @@ export async function dislikeComment(req,res) {
 
     await comment.save();
 
-    return res.status(200).json({ message: "Dislike updated", comment });
+    return res.status(200).json(comment);
   } catch (err) {
     return res.status(500).json({
       message: "Error while disliking comment",
