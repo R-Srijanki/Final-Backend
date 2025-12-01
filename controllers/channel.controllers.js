@@ -135,19 +135,16 @@ export async function subscribeChannel(req, res) {
     if (channel.owner.toString() === req.user._id.toString()) {
       return res.status(400).json({ message: "You cannot subscribe to your own channel" });
     }
-
     if (channel.subscribers.includes(req.user._id)) {
-      return res.status(400).json({ message: "Already subscribed" });
+      channel.subscribers = channel.subscribers.filter(id => id.toString() !== req.user._id.toString());
+      return res.status(200).json({ message: "unsubscribed" });
+    } else {
+      channel.subscribers.push(req.user._id);
     }
 
-    channel.subscribers.push(req.user._id);
     await channel.save();
 
-    return res.status(200).json({
-      message: "Subscribed successfully",
-      channelId: id
-    });
-
+    return res.status(200).json(channel);
   } 
   catch (err) {
     return res.status(500).json({
