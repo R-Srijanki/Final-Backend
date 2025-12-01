@@ -41,7 +41,7 @@ export async function getChannel(req,res) {
         const channel = await Channel.findById(id)
         .populate("owner", "name email")
         .populate("subscribers", "_id name")
-        .populate("videos", "title thumbnail views");
+        .populate("videos", "_id title thumbnailUrl views uploadDate");
 
         if (!channel)
         return res.status(404).json({ message: "Channel not found" });
