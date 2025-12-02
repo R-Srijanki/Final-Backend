@@ -30,8 +30,10 @@ export async function addComment(req,res) {
       user: req.user._id,
       text
     });
+    const populatedComment = await CommentModel.findById(newComment._id)
+      .populate("user", "username avatar");
 
-    return res.status(201).json(newComment);
+    return res.status(201).json(populatedComment);
   } catch (err) {
     return res.status(500).json({
       message: "Error occurred while adding comment",
