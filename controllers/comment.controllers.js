@@ -31,7 +31,7 @@ export async function addComment(req,res) {
       text
     });
     const populatedComment = await CommentModel.findById(newComment._id)
-      .populate("user", "username avatar");
+      .populate("user", "_id username avatar");
 
     return res.status(201).json(populatedComment);
   } catch (err) {
@@ -52,7 +52,8 @@ export async function editComment(req,res) {
       return res.status(404).json({ message: "Comment does not exist" });
 
     // Only owner can edit
-    if (exists.user.toString() !== req.user._id)
+    const userId = exists.user._id ? exists.user._id.toString() : exists.user.toString();
+    if (userId !== req.user._id.toString())
       return res.status(403).json({ message: "Unauthorized" });
 
     const updated = await CommentModel.findByIdAndUpdate(
@@ -60,8 +61,9 @@ export async function editComment(req,res) {
       { $set: { text } },
       { new: true }
     );
-
-    return res.status(200).json(updated);
+    const populatedComment = await CommentModel.findById(updated._id)
+      .populate("user", "_id username avatar");
+    return res.status(200).json(populatedComment);
   } catch (err) {
     return res.status(500).json({
       message: "Error occurred while editing comment",
@@ -79,9 +81,9 @@ export async function deleteComment(req,res) {
       return res.status(404).json({ message: "Comment does not exist" });
 
     // Only owner can delete
-    if (exists.user.toString() !== req.user._id)
+    const userId = exists.user._id ? exists.user._id.toString() : exists.user.toString();
+    if (userId !== req.user._id.toString())
       return res.status(403).json({ message: "Unauthorized" });
-
     await CommentModel.findByIdAndDelete(commentId);
 
     return res.status(200).json({ message: "Comment deleted successfully" });
@@ -98,18 +100,17 @@ export async function likeComment(req,res) {
     const { commentId } = req.params;
     const userId = req.user._id;
 
-    const comment = await CommentModel.findById(commentId);
+    const comment = await CommentModel.findById(commentId)
+          .populate("user", "_id username avatar");
     if (!comment)
       return res.status(404).json({ message: "Comment not found" });
 
-    // Remove dislike if exists
-    comment.dislikes = comment.dislikes.filter(id => id.toString() !== userId);
-
     // Toggle like
     if (comment.likes.includes(userId)) {
-      comment.likes = comment.likes.filter(id => id.toString() !== userId);
+     comment.likes.pull(userId);
     } else {
       comment.likes.push(userId);
+      comment.dislikes.pull(userId);
     }
 
     await comment.save();
@@ -128,18 +129,17 @@ export async function dislikeComment(req,res) {
     const { commentId } = req.params;
     const userId = req.user._id;
 
-    const comment = await CommentModel.findById(commentId);
+    const comment = await CommentModel.findById(commentId)
+          .populate("user", "_id username avatar");
     if (!comment)
       return res.status(404).json({ message: "Comment not found" });
 
-    // Remove like if exists
-    comment.likes = comment.likes.filter(id => id.toString() !== userId);
-
     // Toggle dislike
     if (comment.dislikes.includes(userId)) {
-      comment.dislikes = comment.dislikes.filter(id => id.toString() !== userId);
-    } else {
+      comment.dislikes.pull(userId);
+    }else{
       comment.dislikes.push(userId);
+      comment.likes.pull(userId);
     }
 
     await comment.save();
