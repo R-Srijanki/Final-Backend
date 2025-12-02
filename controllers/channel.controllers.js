@@ -173,10 +173,7 @@ export async function unsubscribeChannel(req, res) {
 
     await channel.save();
 
-    return res.status(200).json({
-      message: "Unsubscribed successfully",
-      channelId: id
-    });
+    return res.status(200).json(channel);
 
   } 
   catch (err) {

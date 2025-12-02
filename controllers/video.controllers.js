@@ -147,11 +147,7 @@ export async function likeVideo(req,res) {
 
     await video.save();
 
-    return res.status(200).json({
-      message: "Video like updated",
-      likes: video.likes.length,
-      dislikes: video.dislikes.length,
-    });
+    return res.status(200).json(video);
   } catch (err) {
     return res.status(500).json({
       message: "Error while liking video",
@@ -178,11 +174,7 @@ export async function dislikeVideo(req,res) {
 
     await video.save();
 
-    return res.status(200).json({
-      message: "Video dislike updated",
-      likes: video.likes.length,
-      dislikes: video.dislikes.length,
-    });
+    return res.status(200).json(video);
   } catch (err) {
     return res.status(500).json({
       message: "Error while disliking video",
