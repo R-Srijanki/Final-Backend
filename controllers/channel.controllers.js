@@ -68,15 +68,18 @@ export async function editChannel(req,res) {
 
         if (channel.owner.toString() !== req.user._id.toString())
         return res.status(403).json({ message: "Unauthorized" });
+        const updates = {};
+    if (req.body.name) updates.name = req.body.name;
+    if (req.body.handle) updates.handle = req.body.handle;
+    if (req.body.description) updates.description = req.body.description;
 
-        const updates = req.body;
+    if (req.file) {
+      // req.file.buffer contains file data
+      // Save to cloud or disk and set URL
+      updates.channelBanner = req.file ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` : "";
+    }
 
-        const updatedChannel = await Channel.findByIdAndUpdate(
-        id,
-        { $set: updates },
-        { new: true }
-        );
-
+    const updatedChannel = await Channel.findByIdAndUpdate(id, updates, { new: true });
         return res.status(200).json({
         message: "Channel updated successfully",
         data: updatedChannel

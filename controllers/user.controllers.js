@@ -47,6 +47,7 @@ export async function loginUser(req,res) {
         //return user details as response with token 
         return res.status(200).json({
             user:{
+                _id:exists._id,
                 username:exists.username,
                 email:exists.email,
                 avatar:exists.avatar,
