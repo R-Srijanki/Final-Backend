@@ -136,8 +136,7 @@ export async function subscribeChannel(req, res) {
       return res.status(400).json({ message: "You cannot subscribe to your own channel" });
     }
     if (channel.subscribers.includes(req.user._id)) {
-      channel.subscribers = channel.subscribers.filter(id => id.toString() !== req.user._id.toString());
-      return res.status(200).json({ message: "unsubscribed" });
+      channel.subscribers.pull(req.user._id);
     } else {
       channel.subscribers.push(req.user._id);
     }
@@ -149,36 +148,6 @@ export async function subscribeChannel(req, res) {
   catch (err) {
     return res.status(500).json({
       message: "Error subscribing to channel",
-      error: err.message
-    });
-  }
-}
-
-export async function unsubscribeChannel(req, res) {
-  try {
-    const { id } = req.params;
-
-    const channel = await Channel.findById(id);
-    if (!channel)
-      return res.status(404).json({ message: "Channel not found" });
-
-    const isSubscribed = channel.subscribers.includes(req.user._id);
-
-    if (!isSubscribed)
-      return res.status(400).json({ message: "You are not subscribed" });
-
-    channel.subscribers = channel.subscribers.filter(
-      (sub) => sub.toString() !== req.user._id.toString()
-    );
-
-    await channel.save();
-
-    return res.status(200).json(channel);
-
-  } 
-  catch (err) {
-    return res.status(500).json({
-      message: "Error unsubscribing",
       error: err.message
     });
   }

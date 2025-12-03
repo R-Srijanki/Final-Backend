@@ -16,7 +16,7 @@ export default function videoRoutes(app) {
 
   app.post("/videos", verifyToken, uploadVideo);
 
-  app.put("/videos/:id", verifyToken, updateVideo);
+  app.patch("/videos/:id", verifyToken, updateVideo);
 
   app.delete("/videos/:id", verifyToken, deleteVideo);
 

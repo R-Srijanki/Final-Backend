@@ -8,7 +8,7 @@ export default function commentRoutes(app){
   app.post('/videos/:id/comments', verifyToken, addComment);
 
   // Edit a comment
-  app.put('/videos/:id/comments/:commentId', verifyToken, editComment);
+  app.patch('/videos/:id/comments/:commentId', verifyToken, editComment);
 
   // Delete a comment
   app.delete('/videos/:id/comments/:commentId', verifyToken, deleteComment);
