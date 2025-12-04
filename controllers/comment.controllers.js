@@ -3,7 +3,7 @@ import CommentModel from "../models/Comment.model.js";
 export async function getComments(req,res) {
    try {
     const { id: videoId } = req.params;
-
+    //get id from url and find it in comment model
     const comments = await CommentModel.find({ video: videoId })
       .populate("user", "username fullName avatar")
       .sort({ createdAt: -1 });
@@ -21,10 +21,10 @@ export async function addComment(req,res) {
     try {
     const { id: videoId } = req.params;
     const { text } = req.body;
-
+//get id and text from req params and body
     if (!text)
       return res.status(400).json({ message: "Comment text is required" });
-
+//add new comment to database by creating with given text
     const newComment = await CommentModel.create({
       video: videoId,
       user: req.user._id,
@@ -32,7 +32,7 @@ export async function addComment(req,res) {
     });
     const populatedComment = await CommentModel.findById(newComment._id)
       .populate("user", "_id username avatar");
-
+//send updated comment with user details populated
     return res.status(201).json(populatedComment);
   } catch (err) {
     return res.status(500).json({
@@ -46,7 +46,7 @@ export async function editComment(req,res) {
       try {
     const { commentId } = req.params;
     const { text } = req.body;
-
+//get id and text from req params and body
     const exists = await CommentModel.findById(commentId);
     if (!exists)
       return res.status(404).json({ message: "Comment does not exist" });
@@ -55,7 +55,7 @@ export async function editComment(req,res) {
     const userId = exists.user._id ? exists.user._id.toString() : exists.user.toString();
     if (userId !== req.user._id.toString())
       return res.status(403).json({ message: "Unauthorized" });
-
+//update text in comment
     const updated = await CommentModel.findByIdAndUpdate(
       commentId,
       { $set: { text } },
@@ -75,7 +75,7 @@ export async function editComment(req,res) {
 export async function deleteComment(req,res) {
    try {
     const { commentId } = req.params;
-
+//get comment id and find in comment model
     const exists = await CommentModel.findById(commentId);
     if (!exists)
       return res.status(404).json({ message: "Comment does not exist" });
@@ -85,7 +85,7 @@ export async function deleteComment(req,res) {
     if (userId !== req.user._id.toString())
       return res.status(403).json({ message: "Unauthorized" });
     await CommentModel.findByIdAndDelete(commentId);
-
+//delete comment from comment model
     return res.status(200).json({ message: "Comment deleted successfully" });
   } catch (err) {
     return res.status(500).json({
@@ -99,7 +99,7 @@ export async function likeComment(req,res) {
      try {
     const { commentId } = req.params;
     const userId = req.user._id;
-
+//get comment id and user id from req and find comment with commentId
     const comment = await CommentModel.findById(commentId)
           .populate("user", "_id username avatar");
     if (!comment)
@@ -110,7 +110,7 @@ export async function likeComment(req,res) {
      comment.likes.pull(userId);
     } else {
       comment.likes.push(userId);
-      comment.dislikes.pull(userId);
+      comment.dislikes.pull(userId);//remove dislike
     }
 
     await comment.save();
@@ -128,7 +128,7 @@ export async function dislikeComment(req,res) {
    try {
     const { commentId } = req.params;
     const userId = req.user._id;
-
+//get comment id and user id from req and find comment with commentId
     const comment = await CommentModel.findById(commentId)
           .populate("user", "_id username avatar");
     if (!comment)
@@ -139,7 +139,7 @@ export async function dislikeComment(req,res) {
       comment.dislikes.pull(userId);
     }else{
       comment.dislikes.push(userId);
-      comment.likes.pull(userId);
+      comment.likes.pull(userId);//remove like
     }
 
     await comment.save();

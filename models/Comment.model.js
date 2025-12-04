@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+//comment schema
 const commentSchema = new mongoose.Schema(
   {
     video: {
@@ -31,5 +31,5 @@ const commentSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+//comment model
 export default mongoose.model("Comment", commentSchema);

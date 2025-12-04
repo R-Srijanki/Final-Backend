@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+//video schema 
 const videoSchema = new mongoose.Schema(
   {
     title: {
@@ -65,5 +65,5 @@ const videoSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+//export video model
 export default mongoose.model("Video", videoSchema);

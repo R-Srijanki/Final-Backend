@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+//channel schema
 const channelSchema = new mongoose.Schema(
   {
     name: {
@@ -45,5 +45,5 @@ const channelSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+//channel model
 export default mongoose.model("Channel", channelSchema);

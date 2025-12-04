@@ -2,10 +2,11 @@ import Video from "../models/Video.model.js"
 import Channel from "../models/Channel.model.js"
 export async function getVideos(req,res){
    try {
+    //find all videos from database and send populate uploader,channel with required fields
     const videos = await Video.find({})
       .populate("uploader", "username fullName avatar")
       .populate("channel", "name handle avatar");
-
+    //return data
     return res.status(200).json(videos);
   } catch (err) {
     return res.status(500).json({
@@ -17,12 +18,12 @@ export async function getVideos(req,res){
 
 export async function getVideo(req,res) {
     try {
-    const { id } = req.params;
-
+    const { id } = req.params;//get video id from url
+      //find video by id 
     const video = await Video.findById(id)
       .populate("uploader", "username fullName avatar")
       .populate("channel", "name handle avatar subscribers");
-
+      //if not found 
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
     }
@@ -39,9 +40,10 @@ export async function getVideo(req,res) {
 
 export async function uploadVideo(req,res) {
     try {
+      //get details from req.body
     const { title, thumbnailUrl, videoUrl, description, category, channel } =
       req.body;
-
+//if any value missing return with error
     if (!title || !thumbnailUrl || !videoUrl || !description || !channel) {
       return res.status(400).json({
         message: "Missing required fields",
@@ -50,7 +52,7 @@ export async function uploadVideo(req,res) {
 
     // uploader is the logged-in user
     const uploaderId = req.user._id;
-    
+    //upload details of video to database by creating document
     const newVideo = await Video.create({
       title,
       thumbnailUrl,
@@ -82,11 +84,11 @@ export async function uploadVideo(req,res) {
 export async function updateVideo(req,res) {
   try {
     const { id } = req.params;
-
+    //update video fields with sent req.body
     const updatedVideo = await Video.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-
+//if not found return error status
     if (!updatedVideo) {
       return res.status(404).json({ message: "Video not found" });
     }
@@ -107,7 +109,7 @@ export async function updateVideo(req,res) {
 export async function deleteVideo(req,res) {
    try {
     const { id } = req.params;
-
+//find video by id and delete
     const deletedVideo = await Video.findByIdAndDelete(id);
 
     if (!deletedVideo) {
@@ -132,7 +134,7 @@ export async function likeVideo(req,res) {
     try {
     const userId = req.user.id;
     const { id } = req.params;
-
+//find video by id
     const video = await Video.findById(id);
     if (!video) return res.status(404).json({ message: "Video not found" });
 
@@ -169,7 +171,7 @@ export async function dislikeVideo(req,res) {
       video.dislikes.pull(userId);
     } else {
       video.dislikes.push(userId);
-      video.likes.pull(userId);
+      video.likes.pull(userId);// remove like if exists
     }
 
     await video.save();
