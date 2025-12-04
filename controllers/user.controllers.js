@@ -11,6 +11,9 @@ export async function registerUser(req,res) {
         //console.log(name,email,password);//find if user exists
         const exists=await User.findOne({email});
         //console.log(exists);
+        const exists1=await User.findOne({username});
+        if(exists1) //if exists then return 
+            return res.status(400).json({message:"Username already in use"});
         if(exists) //if exists then return 
             return res.status(400).json({message:"Email already in use"});
         //create new user with given data of each fields
@@ -34,9 +37,9 @@ export async function loginUser(req,res) {
         if(!username||!email ||!password)//if any data missing then return
             return res.status(400).json({"message":"Missing fields"});
         //find user with given details
-        const exists=await User.findOne({email}).populate("channel","handle");
+        const exists=await User.findOne({email,username}).populate("channel","handle");
         if(!exists)//if user is not registered then return
-            return res.status(401).json({message:"User does not exist"});
+            return res.status(401).json({message:"Invalid email or username"});
         //compare hashed password with typed password 
         let validPassword=bcrypt.compareSync(password,exists.password);
         if(!validPassword){ //if not matched then wrong password
