@@ -84,6 +84,10 @@ export async function uploadVideo(req,res) {
 export async function updateVideo(req,res) {
   try {
     const { id } = req.params;
+     const video = await Video.findById(id)
+      .populate("uploader", "username fullName avatar")
+      .populate("channel", "name handle avatar subscribers");
+    if (!video.uploader.equals(req.user._id)) return res.status(403).json({ message: "Unauthorized" });
     //update video fields with sent req.body
     const updatedVideo = await Video.findByIdAndUpdate(id, req.body, {
       new: true,
@@ -110,6 +114,8 @@ export async function deleteVideo(req,res) {
    try {
     const { id } = req.params;
 //find video by id and delete
+     const video = await Video.findById(id);
+    if (!video.uploader.equals(req.user._id)) return res.status(403).json({ message: "Unauthorized" });
     const deletedVideo = await Video.findByIdAndDelete(id);
 
     if (!deletedVideo) {

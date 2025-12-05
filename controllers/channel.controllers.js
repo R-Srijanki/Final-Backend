@@ -1,6 +1,7 @@
 import Channel from "../models/Channel.model.js"
 import Video from "../models/Video.model.js";
 import User from "../models/User.model.js";
+import Comment from "../models/Comment.model.js";
 export async function createChannel(req,res) {
     try {
     const { name, handle} = req.body;//get details from req body

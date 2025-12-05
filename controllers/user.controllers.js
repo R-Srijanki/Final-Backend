@@ -37,7 +37,7 @@ export async function loginUser(req,res) {
         if(!username||!email ||!password)//if any data missing then return
             return res.status(400).json({"message":"Missing fields"});
         //find user with given details
-        const exists=await User.findOne({email,username}).populate("channel","handle");
+        const exists = await User.findOne({ $or: [{ email }, { username }] }).populate("channel","handle");
         if(!exists)//if user is not registered then return
             return res.status(401).json({message:"Invalid email or username"});
         //compare hashed password with typed password 
