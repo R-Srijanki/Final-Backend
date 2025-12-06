@@ -14,6 +14,7 @@ export default function verifyToken(req,res,next){
                 //get data of user through decoded i.e id
                 const data = await User.findById(verifyToken.id)
                 req.user = data;     
+                // console.log(req.user);
                 //go to next middleware or to route
                 next();           
             });

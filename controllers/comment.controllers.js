@@ -1,5 +1,5 @@
 import CommentModel from "../models/Comment.model.js";
-
+import Video from "../models/Video.model.js";
 export async function getComments(req,res) {
    try {
     const { id: videoId } = req.params;
@@ -24,7 +24,9 @@ export async function addComment(req,res) {
 //get id and text from req params and body
     if (!text)
       return res.status(400).json({ message: "Comment text is required" });
-//add new comment to database by creating with given text
+    const video = await Video.findById(videoId);
+    if (!video) return res.status(404).json({ message: "Video not found" });
+    //add new comment to database by creating with given text
     const newComment = await CommentModel.create({
       video: videoId,
       user: req.user._id,
@@ -52,9 +54,8 @@ export async function editComment(req,res) {
       return res.status(404).json({ message: "Comment does not exist" });
 
     // Only owner can edit
-    const userId = exists.user._id ? exists.user._id.toString() : exists.user.toString();
-    if (userId !== req.user._id.toString())
-      return res.status(403).json({ message: "Unauthorized" });
+    if (!exists.user.equals(req.user._id)) 
+  return res.status(403).json({ message: "Unauthorized" });
 //update text in comment
     const updated = await CommentModel.findByIdAndUpdate(
       commentId,
@@ -81,9 +82,8 @@ export async function deleteComment(req,res) {
       return res.status(404).json({ message: "Comment does not exist" });
 
     // Only owner can delete
-    const userId = exists.user._id ? exists.user._id.toString() : exists.user.toString();
-    if (userId !== req.user._id.toString())
-      return res.status(403).json({ message: "Unauthorized" });
+    if (!exists.user.equals(req.user._id)) 
+  return res.status(403).json({ message: "Unauthorized" });
     await CommentModel.findByIdAndDelete(commentId);
 //delete comment from comment model
     return res.status(200).json({ message: "Comment deleted successfully" });
@@ -106,7 +106,7 @@ export async function likeComment(req,res) {
       return res.status(404).json({ message: "Comment not found" });
 
     // Toggle like
-    if (comment.likes.includes(userId)) {
+    if (comment.likes.some(like => like.equals(userId))) {
      comment.likes.pull(userId);
     } else {
       comment.likes.push(userId);
@@ -135,7 +135,7 @@ export async function dislikeComment(req,res) {
       return res.status(404).json({ message: "Comment not found" });
 
     // Toggle dislike
-    if (comment.dislikes.includes(userId)) {
+    if (comment.dislikes.some(dislike => dislike.equals(userId))) {
       comment.dislikes.pull(userId);
     }else{
       comment.dislikes.push(userId);

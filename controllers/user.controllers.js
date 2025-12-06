@@ -46,7 +46,7 @@ export async function loginUser(req,res) {
             return res.status(401).json({"message":"Incorrect password"});
         }
         //create token with data, secret key, access to it expiresIn
-        let token=jwt.sign({id:exists.id},"SECRETKEY",{expiresIn:"7d"});
+        let token=jwt.sign({id:exists._id},"SECRETKEY",{expiresIn:"7d"});
         //return user details as response with token 
         return res.status(200).json({
             user:{

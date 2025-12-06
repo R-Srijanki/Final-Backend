@@ -138,7 +138,7 @@ export async function deleteVideo(req,res) {
 
 export async function likeVideo(req,res) {
     try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const { id } = req.params;
 //find video by id
     const video = await Video.findById(id);
@@ -166,7 +166,7 @@ export async function likeVideo(req,res) {
 
 export async function dislikeVideo(req,res) {
     try {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const { id } = req.params;
 
     const video = await Video.findById(id);

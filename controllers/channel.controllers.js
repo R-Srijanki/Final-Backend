@@ -2,6 +2,7 @@ import Channel from "../models/Channel.model.js"
 import Video from "../models/Video.model.js";
 import User from "../models/User.model.js";
 import Comment from "../models/Comment.model.js";
+
 export async function createChannel(req,res) {
     try {
     const { name, handle} = req.body;//get details from req body
@@ -44,7 +45,7 @@ export async function getChannel(req,res) {
         const channel = await Channel.findById(id)
         .populate("owner", "name email")
         .populate("subscribers", "_id name")
-        .populate("videos", "_id title thumbnailUrl views uploadDate");
+        .populate("videos");
 
         if (!channel)
         return res.status(404).json({ message: "Channel not found" });
@@ -112,6 +113,7 @@ export async function deleteChannel(req,res) {
 
         const videoIds = videos.map(v => v._id);
 //delete comments,videos and channel 
+        await User.findByIdAndUpdate(req.user._id, { channel: null });
         await Comment.deleteMany({ video: { $in: videoIds } });
 
         await Video.deleteMany({ channel: id });
@@ -139,7 +141,7 @@ export async function subscribeChannel(req, res) {
     if (!channel)
       return res.status(404).json({ message: "Channel not found" });
 
-    if (channel.owner.toString() === req.user._id.toString()) {
+    if (!channel.owner || !channel.owner.equals(req.user._id)) {
       return res.status(400).json({ message: "You cannot subscribe to your own channel" });
     }
     //toggle subscribe
@@ -150,8 +152,10 @@ export async function subscribeChannel(req, res) {
     }
 
     await channel.save();
-
-    return res.status(200).json(channel);
+    const populated = await Channel.findById(channel._id)
+                .populate("subscribers", "_id");
+    return res.status(200).json({ subscribers: populated.subscribers });
+   
   } 
   catch (err) {
     return res.status(500).json({
