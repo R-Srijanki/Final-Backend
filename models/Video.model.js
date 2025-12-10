@@ -1,67 +1,67 @@
 import mongoose from "mongoose";
-//video schema 
+//video schema
 const videoSchema = new mongoose.Schema(
   {
     title: {
       type: String,
-      required: true
+      required: true,
     },
 
     thumbnailUrl: {
       type: String,
-      required: true
+      required: true,
     },
 
     videoUrl: {
       type: String,
-      required: true
+      required: true,
     },
 
     description: {
       type: String,
-      required: true
+      required: true,
     },
 
     category: {
       type: String,
-      default: "General"
+      default: "General",
     },
 
     uploader: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
 
     channel: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Channel",
-      required: true
+      required: true,
     },
 
     views: {
       type: Number,
-      default: 0
+      default: 0,
     },
 
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-      }
+        ref: "User",
+      },
     ],
 
     dislikes: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
-      }
+        ref: "User",
+      },
     ],
 
     uploadDate: {
       type: Date,
-      default: Date.now
-    }
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );

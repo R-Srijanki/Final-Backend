@@ -7,41 +7,41 @@ const channelSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
-      index: true
+      index: true,
     },
     handle: {
       type: String,
       required: true,
       unique: true,
       trim: true,
-      index: true
+      index: true,
     },
     description: {
-      type: String
+      type: String,
     },
     avatar: { type: String },
     channelBanner: { type: String },
 
     owner: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
+      ref: "User",
     },
 
     subscribers: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        default:[]
-      }
+        default: [],
+      },
     ],
 
     videos: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Video",
-        default:[]
-      }
-    ]
+        default: [],
+      },
+    ],
   },
   { timestamps: true }
 );

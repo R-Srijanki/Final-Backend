@@ -2,7 +2,7 @@
 export function notFoundHandler(req, res, next) {
   res.status(404).json({
     success: false,
-    message: `Route ${req.originalUrl} not found`
+    message: `Route ${req.originalUrl} not found`,
   });
 }
 //global error handler
@@ -14,6 +14,6 @@ export function globalErrorHandler(err, req, res, next) {
 
   res.status(statusCode).json({
     success: false,
-    message
+    message,
   });
 }

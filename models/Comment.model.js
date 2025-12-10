@@ -5,29 +5,33 @@ const commentSchema = new mongoose.Schema(
     video: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Video",
-      required: true
+      required: true,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true
+      required: true,
     },
     text: {
       type: String,
-      required: true
+      required: true,
     },
-    likes:[{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:"User"
-    }],
-    dislikes:[{
-      type:mongoose.Schema.Types.ObjectId,
-      ref:"User"
-    }],
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    dislikes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     timestamp: {
       type: Date,
-      default: Date.now
-    }
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );

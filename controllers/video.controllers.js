@@ -1,7 +1,7 @@
-import Video from "../models/Video.model.js"
-import Channel from "../models/Channel.model.js"
-export async function getVideos(req,res){
-   try {
+import Video from "../models/Video.model.js";
+import Channel from "../models/Channel.model.js";
+export async function getVideos(req, res) {
+  try {
     //find all videos from database and send populate uploader,channel with required fields
     const videos = await Video.find({})
       .populate("uploader", "username fullName avatar")
@@ -16,14 +16,14 @@ export async function getVideos(req,res){
   }
 }
 
-export async function getVideo(req,res) {
-    try {
-    const { id } = req.params;//get video id from url
-      //find video by id 
+export async function getVideo(req, res) {
+  try {
+    const { id } = req.params; //get video id from url
+    //find video by id
     const video = await Video.findById(id)
       .populate("uploader", "username fullName avatar")
       .populate("channel", "name handle avatar subscribers");
-      //if not found 
+    //if not found
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
     }
@@ -35,15 +35,14 @@ export async function getVideo(req,res) {
       error: err.message,
     });
   }
-
 }
 
-export async function uploadVideo(req,res) {
-    try {
-      //get details from req.body
+export async function uploadVideo(req, res) {
+  try {
+    //get details from req.body
     const { title, thumbnailUrl, videoUrl, description, category, channel } =
       req.body;
-//if any value missing return with error
+    //if any value missing return with error
     if (!title || !thumbnailUrl || !videoUrl || !description || !channel) {
       return res.status(400).json({
         message: "Missing required fields",
@@ -81,18 +80,19 @@ export async function uploadVideo(req,res) {
   }
 }
 
-export async function updateVideo(req,res) {
+export async function updateVideo(req, res) {
   try {
     const { id } = req.params;
-     const video = await Video.findById(id)
+    const video = await Video.findById(id)
       .populate("uploader", "username fullName avatar")
       .populate("channel", "name handle avatar subscribers");
-    if (!video.uploader.equals(req.user._id)) return res.status(403).json({ message: "Unauthorized" });
+    if (!video.uploader.equals(req.user._id))
+      return res.status(403).json({ message: "Unauthorized" });
     //update video fields with sent req.body
     const updatedVideo = await Video.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-//if not found return error status
+    //if not found return error status
     if (!updatedVideo) {
       return res.status(404).json({ message: "Video not found" });
     }
@@ -107,15 +107,15 @@ export async function updateVideo(req,res) {
       error: err.message,
     });
   }
-
 }
 
-export async function deleteVideo(req,res) {
-   try {
+export async function deleteVideo(req, res) {
+  try {
     const { id } = req.params;
-//find video by id and delete
-     const video = await Video.findById(id);
-    if (!video.uploader.equals(req.user._id)) return res.status(403).json({ message: "Unauthorized" });
+    //find video by id and delete
+    const video = await Video.findById(id);
+    if (!video.uploader.equals(req.user._id))
+      return res.status(403).json({ message: "Unauthorized" });
     const deletedVideo = await Video.findByIdAndDelete(id);
 
     if (!deletedVideo) {
@@ -136,11 +136,11 @@ export async function deleteVideo(req,res) {
   }
 }
 
-export async function likeVideo(req,res) {
-    try {
+export async function likeVideo(req, res) {
+  try {
     const userId = req.user._id;
     const { id } = req.params;
-//find video by id
+    //find video by id
     const video = await Video.findById(id);
     if (!video) return res.status(404).json({ message: "Video not found" });
 
@@ -164,8 +164,8 @@ export async function likeVideo(req,res) {
   }
 }
 
-export async function dislikeVideo(req,res) {
-    try {
+export async function dislikeVideo(req, res) {
+  try {
     const userId = req.user._id;
     const { id } = req.params;
 
@@ -177,7 +177,7 @@ export async function dislikeVideo(req,res) {
       video.dislikes.pull(userId);
     } else {
       video.dislikes.push(userId);
-      video.likes.pull(userId);// remove like if exists
+      video.likes.pull(userId); // remove like if exists
     }
 
     await video.save();

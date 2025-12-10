@@ -7,32 +7,32 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
-      index: true
+      index: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      trim: true
+      trim: true,
     },
     fullName: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     avatar: {
       type: String,
-      default: "" // optional
+      default: "", // optional
     },
     password: {
       type: String,
-      required: true
+      required: true,
     },
     channel: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Channel", 
-      default: null   // user may not have channel yet
-    }
+      ref: "Channel",
+      default: null, // user may not have channel yet
+    },
   },
   { timestamps: true }
 );
